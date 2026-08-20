@@ -1,0 +1,12 @@
+ticket_id,ticket_text
+T001,I was charged twice for my order
+T002,Refund not received after cancellation
+T003,Payment failed but amount deducted
+T004,Unable to login into my account
+T005,Login not working on Chrome browser
+T006,Forgot my password
+T007,Password reset link not working
+T008,Where can I track my order status?
+T009,My order was not delivered
+T010,Package says delivered but I didnt receive it
+T011,Renew my subscription

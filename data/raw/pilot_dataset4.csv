@@ -1,0 +1,101 @@
+ticket_text,true_category
+my payment failed but money was deducted,Billing
+i was charged twice for the same order,Billing
+my invoice shows the wrong amount,Billing
+i can't download my billing receipt,Billing
+payment method not accepted on checkout,Billing
+auto renewal happened without my consent,Billing
+credit card payment not reflected,Billing
+billing address error during checkout,Billing
+duplicate transaction detected,Billing
+payment gateway timed out,Billing
+i requested a refund but haven't received it,Refund
+refund was processed to wrong account,Refund
+partial refund received instead of full,Refund
+how can i track my refund status,Refund
+refund taking too long to process,Refund
+my refund got declined without reason,Refund
+refund not credited after cancellation,Refund
+refund confirmation email not received,Refund
+wrong item refunded instead of mine,Refund
+refund initiated but not showing in wallet,Refund
+i forgot my password and can't log in,Account
+account locked after multiple failed attempts,Account
+unable to verify my email,Account
+can't update my phone number in account settings,Account
+received unauthorized login alert,Account
+want to delete my account permanently,Account
+my username was changed without permission,Account
+2 step verification code not working,Account
+account suspended without explanation,Account
+unable to link my account to google login,Account
+product arrived with missing parts,Product
+the item color is different from description,Product
+defective item received,Product
+product stopped working after one week,Product
+wrong item shipped instead of what i ordered,Product
+product size doesn't match the chart,Product
+manual not included with product,Product
+product packaging was damaged,Product
+received an expired product,Product
+missing accessory in product box,Product
+website is too slow when i try to checkout,Technical
+app crashes every time i open it,Technical
+error message appears during payment,Technical
+unable to load product images,Technical
+site not working on my mobile browser,Technical
+download button not responding,Technical
+app update causing glitches,Technical
+facing issue with captcha verification,Technical
+checkout button not working properly,Technical
+technical error code 500 showing up,Technical
+my package hasn't arrived yet,Delivery
+delivery status stuck on shipped for 5 days,Delivery
+wrong address entered but can't change it,Delivery
+package marked delivered but i did not receive it,Delivery
+delivery guy did not call before arriving,Delivery
+received open package on delivery,Delivery
+tracking id not working,Delivery
+delivery delayed without any update,Delivery
+package lost in transit,Delivery
+need to reschedule delivery date,Delivery
+want to give feedback about customer support,Other
+my suggestion for product improvement,Other
+received promotional email without subscribing,Other
+how do i unsubscribe from newsletters,Other
+want to know about upcoming sales,Other
+need help understanding loyalty points system,Other
+how can i contact support manager directly,Other
+please update your app with dark mode feature,Other
+want to collaborate for business proposal,Other
+need information about your company policies,Other
+technical error code 500 showing up follow up required,Technical
+missing accessory in product box any update?,Product
+technical error code 500 showing up still waiting,Technical
+delivery status stuck on shipped for 5 days follow up required,Delivery
+2fa verification code not working need urgent help,Account
+need help understanding loyalty points system any update?,Other
+wrong address entered but can't change it need urgent help,Delivery
+delivery status stuck on shipped for 5 days still waiting,Delivery
+my suggestion for product improvement any update,Other
+received promotional email without subscribing follow up required,Other
+product arrived with missing parts any update,Product
+billing address error during checkout follow up required,Billing
+my invoice shows the wrong amount please assist,Billing
+delivery delayed without any update please assist,Delivery
+received an expired product still waiting,Product
+manual not included with product please assist,Product
+checkout button not working properly need urgent help,Technical
+account suspended without explanation please assist,Account
+refund was processed to wrong account any update,Refund
+received unauthorized login alert need urgent help,Account
+delivery delayed without any update please assist,Delivery
+product arrived with missing parts please assist,Product
+package lost in transit any update,Delivery
+want to delete my account permanently still waiting,Account
+unable to load product images please assist,Technical
+download button not responding need urgent help,Technical
+refund was processed to wrong account follow up required,Refund
+payment method not accepted on checkout follow up required,Billing
+want to collaborate for business proposal need urgent help,Other
+partial refund received instead of full please assist,Refund

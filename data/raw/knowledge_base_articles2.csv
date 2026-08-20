@@ -1,0 +1,11 @@
+id,title,category,body
+1,Refund Process,Billing,Go to My Orders and click on Request Refund. Refunds take 5 to 7 days after approval.
+2,Payment Failure,Billing,"Check internet and card details, then retry. If payment deducted but order failed, refund arrives in 3 to 5 days."
+3,Login Issues,Technical,"Check Caps Lock, clear cache, or use another browser.If still failing, click Forgot Password or contact support."
+4,Password Reset,Technical,"Click Forgot Password, enter email/phone, and follow the link."
+5,Account Deactivation,Account Management,Go to Settings then Account click on Deactivate. Data and history will be removed. Reactivate within 30 days or email for permanent deletion.
+6,Order Tracking,Delivery,"Open My Orders click on Track Shipment.Use tracking ID for updates. If stuck over 48 hrs, contact support."
+7,Product Not Delivered,Delivery,"Check tracking ID. If marked Delivered but not received, share order ID + address. We'll investigate and arrange replacement/refund."
+8,Cancel Order,Order Management,"Go to My Orders click on Cancel before shipment. If shipped, refuse delivery. Refund starts once cancellation confirmed."
+9,Subscription Renewal,Billing,"Open Subscriptions then Manage Plan click on Renew. Update payment method if failed. For issues, share plan ID."
+10,Contact Support,General,"Restart app, clear cache, and update version.If issue persists, send screenshot to techsupport@company.com"
