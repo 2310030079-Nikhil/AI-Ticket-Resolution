@@ -1,14 +1,19 @@
-# Environment variables
+# Environment variables & secrets
 .env
 .env.*
 !.env.example
 
-# Service account credentials & secrets
-credentials/*.json
-credentials/service_account.json
+# Credentials
+credentials/
+credentials.json
+*.json
+!requirements*.txt
+!package*.json
+!config/*.json
 
-# Python cache & build outputs
+# Python cache & virtual environments
 __pycache__/
+__cache__/
 *.pyc
 *.pyo
 *.pyd
@@ -17,10 +22,12 @@ env/
 venv/
 .venv/
 ENV/
+.ipynb_checkpoints/
+.streamlit/
 
-# Logs and data outputs
-logs/*.log
-*.log
+# Binary models & embeddings
+*.pkl
+*.faiss
 
 # IDE & OS files
 .vscode/
