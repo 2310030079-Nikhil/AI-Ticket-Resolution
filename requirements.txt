@@ -15,5 +15,4 @@ requests
 apscheduler
 streamlit
 groq
-load_dotenv
-scikit-learn
+python-dotenv

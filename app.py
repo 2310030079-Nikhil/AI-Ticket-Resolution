@@ -128,16 +128,38 @@ if page == "🧹 Ticket Preprocessing":
             st.dataframe(df.head())  # Show sample data
             st.session_state.df = df  # Store the dataframe in session state
 
+            # Find best candidate column for text preprocessing
+            candidate_cols = ["ticket_text", "text", "body", "description", "issue", "title"]
+            default_index = 0
+            for idx, c in enumerate(df.columns):
+                if c.lower() in candidate_cols:
+                    default_index = idx
+                    break
+
+            selected_col = st.selectbox(
+                "Select text column to clean/preprocess:",
+                options=list(df.columns),
+                index=default_index,
+                help="Choose the column containing the text you want to preprocess into 'clean_text'."
+            )
+
             if st.button("Preprocess and Save", key="preprocess"):
                 with st.spinner("Preprocessing tickets..."):
-                    processor = TicketProcessor(df = df, output_file=f"data/processed/{preprocessed_filename}")
-                    processor.process_and_save()
-                    st.success(f"Preprocessing completed! Saved to data/processed/{preprocessed_filename}")
+                    try:
+                        processor = TicketProcessor(
+                            df=df, 
+                            output_file=f"data/processed/{preprocessed_filename}",
+                            text_column=selected_col
+                        )
+                        processor.process_and_save()
+                        st.success(f"Preprocessing completed! Saved to data/processed/{preprocessed_filename}")
 
-                # Optionally, show and provide a download for the processed CSV
-                processed_df = pd.read_csv(f"data/processed/{preprocessed_filename}")
-                st.dataframe(processed_df.head())
-                st.download_button("Download Processed CSV", processed_df.to_csv(index=False), "processed_tickets.csv", "text/csv")
+                        # Optionally, show and provide a download for the processed CSV
+                        processed_df = pd.read_csv(f"data/processed/{preprocessed_filename}")
+                        st.dataframe(processed_df.head())
+                        st.download_button("Download Processed CSV", processed_df.to_csv(index=False), "processed_tickets.csv", "text/csv")
+                    except Exception as e:
+                        st.error(f"❌ Error during preprocessing: {e}")
 
     else:  # Use default file (hardcoded path)
         st.subheader("Using Default Tickets File")
@@ -145,18 +167,21 @@ if page == "🧹 Ticket Preprocessing":
         
         if st.button("Preprocess and Save Default File"):
             with st.spinner("Preprocessing default tickets..."):
-                processor.process_and_save()
-                st.success(f"Preprocessing completed! Processed file saved in data/processed/preprocessed_tickets6.csv")
+                try:
+                    processor.process_and_save()
+                    st.success(f"Preprocessing completed! Processed file saved in data/processed/preprocessed_tickets6.csv")
 
-            # Show and download the processed data
-            processed_df = pd.read_csv("data/processed/preprocessed_tickets6.csv")
-            st.dataframe(processed_df.head())
-            st.download_button(
-                label="📥 Download Processed Tickets",
-                data=processed_df.to_csv(index=False),
-                file_name="preprocessed_tickets6.csv",
-                mime="text/csv"
-            )
+                    # Show and download the processed data
+                    processed_df = pd.read_csv("data/processed/preprocessed_tickets6.csv")
+                    st.dataframe(processed_df.head())
+                    st.download_button(
+                        label="📥 Download Processed Tickets",
+                        data=processed_df.to_csv(index=False),
+                        file_name="preprocessed_tickets6.csv",
+                        mime="text/csv"
+                    )
+                except Exception as e:
+                    st.error(f"❌ Error during preprocessing: {e}")
 
 
 # TAB 2: Ticket Classification
@@ -262,38 +287,56 @@ if page == "📄 Ticket Recommendations":
         st.write(f"✅ Loaded **{len(df)}** tickets.")
         st.dataframe(df.head())
 
+        # Ensure ticket_id exists
+        if "ticket_id" not in df.columns:
+            id_col = next((c for c in ["id", "ticketId", "TicketID"] if c in df.columns), None)
+            if id_col:
+                df["ticket_id"] = df[id_col].astype(str)
+            else:
+                df["ticket_id"] = [f"T{i+1:03d}" for i in range(len(df))]
+
+        # Ensure ticket_text exists or can be mapped from candidate columns
+        if "ticket_text" not in df.columns:
+            text_candidates = ["clean_text", "text", "body", "description", "issue", "title"]
+            text_col = next((c for c in text_candidates if c in df.columns), None)
+            if text_col:
+                df["ticket_text"] = df[text_col].astype(str)
         
-        if st.button("Get Recommendations ⚡", key="recommend_button"):
-            with st.spinner("Generating Recommendations..."):
-                tickets = df.to_dict(orient="records")
-                results = [client.send_ticket(ticket) for ticket in tickets]
-                results_df = pd.DataFrame(results)
-                
-                os.makedirs("logs", exist_ok=True)
-                results_df.to_csv(f"logs/recommendation_results_tickets5.csv", index=False)
-                st.success(f"✅ Recommendations generated and saved to logs/recommendation_results_tickets5.csv")
-                
-                results_df["results"] = results_df["recommendations"]  # map your data here
-                
-                # Flatten and format recommendations for display (top 3 only)
-                def format_recommendations(recs):
-                    if isinstance(recs, list):
-                        return ", ".join([r.get("title", str(r)) for r in recs[:3]])
-                    return str(recs)
+        if "ticket_text" not in df.columns:
+            st.error(f"CSV must contain a 'ticket_text' (or 'clean_text'/'text'/'body') column. Found: {list(df.columns)}")
+        else:
+            if st.button("Get Recommendations ⚡", key="recommend_button"):
+                with st.spinner("Generating Recommendations..."):
+                    tickets = df[["ticket_id", "ticket_text"]].to_dict(orient="records")
+                    results = [client.send_ticket(ticket) for ticket in tickets]
+                    results_df = pd.DataFrame(results)
+                    
+                    os.makedirs("logs", exist_ok=True)
+                    results_df.to_csv(f"logs/recommendation_results_tickets5.csv", index=False)
+                    st.success(f"✅ Recommendations generated and saved to logs/recommendation_results_tickets5.csv")
+                    
+                    results_df["results"] = results_df.get("recommendations", [])
+                    
+                    # Flatten and format recommendations for display (top 3 only)
+                    def format_recommendations(recs):
+                        if isinstance(recs, list):
+                            return ", ".join([r.get("article_title", r.get("title", str(r))) for r in recs[:3]])
+                        return str(recs)
 
-                if "recommendations" in results_df.columns:
-                    results_df["top_3_recommendations"] = results_df["recommendations"].apply(format_recommendations)
+                    if "recommendations" in results_df.columns:
+                        results_df["top_3_recommendations"] = results_df["recommendations"].apply(format_recommendations)
 
-            st.success("Recommended Articles")
-            st.dataframe(results_df[["ticket_id", "ticket_text", "top_3_recommendations"]])
+                st.success("Recommended Articles")
+                cols_to_show = [col for col in ["ticket_id", "ticket_text", "top_3_recommendations"] if col in results_df.columns]
+                st.dataframe(results_df[cols_to_show])
 
-            st.download_button(
-                label="📥 Download Results (CSV)",
-                data=results_df.to_csv(index=False).encode("utf-8"),
-                file_name="recommendation_results.csv",
-                mime="text/csv",
-                key="download_csv"
-            )
+                st.download_button(
+                    label="📥 Download Results (CSV)",
+                    data=results_df.to_csv(index=False).encode("utf-8"),
+                    file_name="recommendation_results.csv",
+                    mime="text/csv",
+                    key="download_csv"
+                )
 
     else:
         st.info("Please upload a ticket CSV file to get started.")
