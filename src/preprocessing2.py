@@ -20,6 +20,15 @@ class TicketProcessor:
         return re.sub(r"[^a-zA-Z\s]", "", text.lower()).strip()
 
     def process_and_save(self):
+        # Ensure ticket_id exists
+        if "ticket_id" not in self.df.columns:
+            id_candidates = ["ticket_id", "id", "ticketId", "TicketID", "ticket_no"]
+            found_id = next((c for c in id_candidates if c in self.df.columns), None)
+            if found_id:
+                self.df["ticket_id"] = self.df[found_id].astype(str)
+            else:
+                self.df["ticket_id"] = [f"T{i+1:03d}" for i in range(len(self.df))]
+
         col = self.text_column
         if col not in self.df.columns:
             # Fallback candidates if the specified column is not present

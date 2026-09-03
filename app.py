@@ -204,41 +204,70 @@ if page == "🎫 Ticket Classification and Tagging":
             st.json(st.session_state.ticket_classify_result)
 
     else:  # CSV Upload
-        uploaded_file = st.file_uploader("Upload CSV with 'clean_text' column", type=["csv"])
+        uploaded_file = st.file_uploader(
+            "Upload Tickets CSV (Raw or Preprocessed)", type=["csv"]
+        )
         if uploaded_file:
             df = pd.read_csv(uploaded_file)
+            st.write(f"✅ Loaded **{len(df)}** tickets from `{uploaded_file.name}`.")
+            st.dataframe(df.head())
 
-            if "ticket_id" not in df.columns or "clean_text" not in df.columns:
-                st.error("CSV must contain 'ticket_id' and 'clean_text' columns.")
+            # Auto-detect or generate ticket_id
+            if "ticket_id" not in df.columns:
+                id_col = next((c for c in ["id", "ticketId", "TicketID", "ticket_no", "ticket_number"] if c in df.columns), None)
+                if id_col:
+                    df["ticket_id"] = df[id_col].astype(str)
+                else:
+                    df["ticket_id"] = [f"T{i+1:03d}" for i in range(len(df))]
+                    st.info("ℹ️ Auto-generated ticket IDs (`T001`, `T002`, ...) since no ID column was found.")
 
-            else:
-                if st.button("Classify All Tickets", key="batch_ticket"):
-                    with st.spinner("Classifying all tickets..."):
-                        ticket_id = df["ticket_id"].tolist()
-                        tickets = df["clean_text"].tolist()
-                        classifier.classify_all(ticket_id, tickets)
+            # Detect candidate text columns
+            text_candidates = ["clean_text", "ticket_text", "text", "body", "description", "issue", "title"]
+            default_index = 0
+            for idx, c in enumerate(df.columns):
+                if c.lower() in text_candidates:
+                    default_index = idx
+                    break
 
-                        # Convert the results to a DataFrame
-                        classified_df = pd.DataFrame(classifier.results)
-                        st.session_state.batch_classify_result = classified_df
+            selected_text_col = st.selectbox(
+                "Select text column for classification:",
+                options=list(df.columns),
+                index=default_index,
+                help="Choose the column containing ticket text to classify."
+            )
 
-                        # Save the classified tickets as a CSV file
-                        classified_data_dir = "data/processed"
-                        os.makedirs(classified_data_dir, exist_ok=True)
-                        tickets_file_path = os.path.join(classified_data_dir, "classified_tickets5.csv")
+            # Check Groq API Key
+            groq_key = os.getenv("GROQ_API_KEY", "").strip()
+            if not groq_key or groq_key == "place your api key here":
+                st.warning("⚠️ `GROQ_API_KEY` is not set or using placeholder in `.env`. Please provide a valid Groq API key in your `.env` file for classification to work.")
 
-                        classified_df.to_csv(tickets_file_path, index=False)
-                        st.success(f"✅ Classified tickets saved to {tickets_file_path}")
+            if st.button("Classify All Tickets", key="batch_ticket"):
+                with st.spinner("Classifying all tickets..."):
+                    ticket_ids = df["ticket_id"].astype(str).tolist()
+                    tickets = df[selected_text_col].astype(str).tolist()
+                    classifier.classify_all(ticket_ids, tickets)
 
-                if st.session_state.batch_classify_result is not None:
-                    st.subheader("✅ Tickets Classification Results")
-                    st.dataframe(st.session_state.batch_classify_result.head())
-                    st.download_button(
-                        "📥 Download Results CSV",
-                        st.session_state.batch_classify_result.to_csv(index=False),
-                        "classified_tickets.csv",
-                        "text/csv"
-                    )
+                    # Convert the results to a DataFrame
+                    classified_df = pd.DataFrame(classifier.results)
+                    st.session_state.batch_classify_result = classified_df
+
+                    # Save the classified tickets as a CSV file
+                    classified_data_dir = "data/processed"
+                    os.makedirs(classified_data_dir, exist_ok=True)
+                    tickets_file_path = os.path.join(classified_data_dir, "classified_tickets5.csv")
+
+                    classified_df.to_csv(tickets_file_path, index=False)
+                    st.success(f"✅ Classified tickets saved to {tickets_file_path}")
+
+            if st.session_state.batch_classify_result is not None:
+                st.subheader("✅ Tickets Classification Results")
+                st.dataframe(st.session_state.batch_classify_result.head(10))
+                st.download_button(
+                    "📥 Download Results CSV",
+                    st.session_state.batch_classify_result.to_csv(index=False),
+                    "classified_tickets.csv",
+                    "text/csv"
+                )
 
 
 # TAB 3: Recommendations

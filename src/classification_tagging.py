@@ -150,12 +150,12 @@ class TicketClassifier:
                 "error": str(e)
             }
 
-    def classify_all(self, ticket_id: list[str], text: list[str], rate_limit = 1):
+    def classify_all(self, ticket_ids: list[str], texts: list[str], rate_limit = 1):
         print("Ticket classification started...\n")
         self.results = []
 
-        for ticket_id, text in zip(ticket_id, text):
-            result = self.classify_ticket(ticket_id,text)
+        for t_id, t_text in zip(ticket_ids, texts):
+            result = self.classify_ticket(t_id, t_text)
             self.results.append(result)
             time.sleep(rate_limit)
 
@@ -173,8 +173,9 @@ class TicketClassifier:
             error_df.to_csv("logs/error_log6.csv", index=False)
             print(f"Logged {len(error_df)} failed records to 'logs/error_log6.csv'.")
 
+        total_processed = len(getattr(self, "tickets", self.results))
         print("\nSUMMARY REPORT:")
-        print(f"Total Tickets Processed: {len(self.tickets)}")
+        print(f"Total Tickets Processed: {total_processed}")
         print(f"Successful: {len(results_df) - len(error_df)} | Failed: {len(error_df)}")
 
 

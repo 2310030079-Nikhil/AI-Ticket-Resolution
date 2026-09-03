@@ -1,0 +1,101 @@
+ticket_text,true_category,ticket_id,clean_text
+my payment failed but money was deducted,Billing,T001,billing
+i was charged twice for the same order,Billing,T002,billing
+my invoice shows the wrong amount,Billing,T003,billing
+i can't download my billing receipt,Billing,T004,billing
+payment method not accepted on checkout,Billing,T005,billing
+auto renewal happened without my consent,Billing,T006,billing
+credit card payment not reflected,Billing,T007,billing
+billing address error during checkout,Billing,T008,billing
+duplicate transaction detected,Billing,T009,billing
+payment gateway timed out,Billing,T010,billing
+i requested a refund but haven't received it,Refund,T011,refund
+refund was processed to wrong account,Refund,T012,refund
+partial refund received instead of full,Refund,T013,refund
+how can i track my refund status,Refund,T014,refund
+refund taking too long to process,Refund,T015,refund
+my refund got declined without reason,Refund,T016,refund
+refund not credited after cancellation,Refund,T017,refund
+refund confirmation email not received,Refund,T018,refund
+wrong item refunded instead of mine,Refund,T019,refund
+refund initiated but not showing in wallet,Refund,T020,refund
+i forgot my password and can't log in,Account,T021,account
+account locked after multiple failed attempts,Account,T022,account
+unable to verify my email,Account,T023,account
+can't update my phone number in account settings,Account,T024,account
+received unauthorized login alert,Account,T025,account
+want to delete my account permanently,Account,T026,account
+my username was changed without permission,Account,T027,account
+2 step verification code not working,Account,T028,account
+account suspended without explanation,Account,T029,account
+unable to link my account to google login,Account,T030,account
+product arrived with missing parts,Product,T031,product
+the item color is different from description,Product,T032,product
+defective item received,Product,T033,product
+product stopped working after one week,Product,T034,product
+wrong item shipped instead of what i ordered,Product,T035,product
+product size doesn't match the chart,Product,T036,product
+manual not included with product,Product,T037,product
+product packaging was damaged,Product,T038,product
+received an expired product,Product,T039,product
+missing accessory in product box,Product,T040,product
+website is too slow when i try to checkout,Technical,T041,technical
+app crashes every time i open it,Technical,T042,technical
+error message appears during payment,Technical,T043,technical
+unable to load product images,Technical,T044,technical
+site not working on my mobile browser,Technical,T045,technical
+download button not responding,Technical,T046,technical
+app update causing glitches,Technical,T047,technical
+facing issue with captcha verification,Technical,T048,technical
+checkout button not working properly,Technical,T049,technical
+technical error code 500 showing up,Technical,T050,technical
+my package hasn't arrived yet,Delivery,T051,delivery
+delivery status stuck on shipped for 5 days,Delivery,T052,delivery
+wrong address entered but can't change it,Delivery,T053,delivery
+package marked delivered but i did not receive it,Delivery,T054,delivery
+delivery guy did not call before arriving,Delivery,T055,delivery
+received open package on delivery,Delivery,T056,delivery
+tracking id not working,Delivery,T057,delivery
+delivery delayed without any update,Delivery,T058,delivery
+package lost in transit,Delivery,T059,delivery
+need to reschedule delivery date,Delivery,T060,delivery
+want to give feedback about customer support,Other,T061,other
+my suggestion for product improvement,Other,T062,other
+received promotional email without subscribing,Other,T063,other
+how do i unsubscribe from newsletters,Other,T064,other
+want to know about upcoming sales,Other,T065,other
+need help understanding loyalty points system,Other,T066,other
+how can i contact support manager directly,Other,T067,other
+please update your app with dark mode feature,Other,T068,other
+want to collaborate for business proposal,Other,T069,other
+need information about your company policies,Other,T070,other
+technical error code 500 showing up follow up required,Technical,T071,technical
+missing accessory in product box any update?,Product,T072,product
+technical error code 500 showing up still waiting,Technical,T073,technical
+delivery status stuck on shipped for 5 days follow up required,Delivery,T074,delivery
+2fa verification code not working need urgent help,Account,T075,account
+need help understanding loyalty points system any update?,Other,T076,other
+wrong address entered but can't change it need urgent help,Delivery,T077,delivery
+delivery status stuck on shipped for 5 days still waiting,Delivery,T078,delivery
+my suggestion for product improvement any update,Other,T079,other
+received promotional email without subscribing follow up required,Other,T080,other
+product arrived with missing parts any update,Product,T081,product
+billing address error during checkout follow up required,Billing,T082,billing
+my invoice shows the wrong amount please assist,Billing,T083,billing
+delivery delayed without any update please assist,Delivery,T084,delivery
+received an expired product still waiting,Product,T085,product
+manual not included with product please assist,Product,T086,product
+checkout button not working properly need urgent help,Technical,T087,technical
+account suspended without explanation please assist,Account,T088,account
+refund was processed to wrong account any update,Refund,T089,refund
+received unauthorized login alert need urgent help,Account,T090,account
+delivery delayed without any update please assist,Delivery,T091,delivery
+product arrived with missing parts please assist,Product,T092,product
+package lost in transit any update,Delivery,T093,delivery
+want to delete my account permanently still waiting,Account,T094,account
+unable to load product images please assist,Technical,T095,technical
+download button not responding need urgent help,Technical,T096,technical
+refund was processed to wrong account follow up required,Refund,T097,refund
+payment method not accepted on checkout follow up required,Billing,T098,billing
+want to collaborate for business proposal need urgent help,Other,T099,other
+partial refund received instead of full please assist,Refund,T100,refund
