@@ -73,38 +73,61 @@ if page == "📥 Load Tickets from Google Sheet":
     worksheet_name = st.text_input("Worksheet Name", "Sheet1")
     creds_path = st.text_input("Credentials File Path", "credentials/service_account.json")
     
-    submit_button = st.button("Load Data")
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        submit_button = st.button("Load Data", key="btn_load_gsheet")
+    with col2:
+        use_cached = st.button("📁 Load Local Saved Copy (tickets6.csv)", key="btn_load_local")
     
     if submit_button:
-        try:
-            google_sheet_loader = GoogleSheetLoader(sheet_name, worksheet_name, creds_path)
-            st.session_state.gsheet_data = google_sheet_loader.load_data()
-            st.success("Tickets Loaded Successfully!")
+        if not os.path.exists(creds_path):
+            st.error(f"❌ Credentials file not found at `{creds_path}`. Please ensure the file exists.")
+        else:
+            with st.spinner("Connecting to Google Sheets and loading data..."):
+                try:
+                    google_sheet_loader = GoogleSheetLoader(sheet_name, worksheet_name, creds_path)
+                    st.session_state.gsheet_data = google_sheet_loader.load_data()
+                    st.success("✅ Tickets Loaded Successfully from Google Sheets!")
 
-            if not st.session_state.gsheet_data.empty:
-                st.write("### Loaded Tickets Preview")
-                st.dataframe(st.session_state.gsheet_data)
+                    if not st.session_state.gsheet_data.empty:
+                        # Save the loaded data as tickets6.csv in data/raw folder
+                        raw_data_dir = "data/raw"
+                        os.makedirs(raw_data_dir, exist_ok=True)
+                        tickets_file_path = os.path.join(raw_data_dir, "tickets6.csv")
+                        st.session_state.gsheet_data.to_csv(tickets_file_path, index=False)
+                        st.success(f"✅ Tickets saved as {tickets_file_path}")
+                    else:
+                        st.warning("No data found in the Google Sheet.")
+                except Exception as e:
+                    err_msg = str(e)
+                    if "503" in err_msg:
+                        st.error(
+                            "⚠️ Google Sheets API temporarily returned 503 (Service Unavailable). "
+                            "This is an intermittent Google server-side issue. Please click 'Load Data' again to retry, "
+                            "or click 'Load Local Saved Copy' to use existing tickets."
+                        )
+                    else:
+                        st.error(f"❌ Error loading data from Google Sheets: {e}")
 
-                # Save the loaded data as tickets6.csv in data/raw folder
-                raw_data_dir = "data/raw"
-                os.makedirs(raw_data_dir, exist_ok=True)  # Ensure the folder exists
-                tickets_file_path = os.path.join(raw_data_dir, "tickets6.csv")
-                
-                # Save DataFrame to CSV
-                st.session_state.gsheet_data.to_csv(tickets_file_path, index=False)
-                st.success(f"✅ Tickets saved as {tickets_file_path}")
+    if use_cached:
+        cached_path = "data/raw/tickets6.csv"
+        if os.path.exists(cached_path):
+            st.session_state.gsheet_data = pd.read_csv(cached_path)
+            st.success(f"✅ Loaded {len(st.session_state.gsheet_data)} tickets from `{cached_path}`!")
+        else:
+            st.warning(f"No local file found at `{cached_path}`.")
 
-                csv_data = st.session_state.gsheet_data.to_csv(index=False)
-                st.download_button(
-                    label="📥 Download Loaded Tickets as CSV",
-                    data=csv_data,
-                    file_name="loaded_tickets.csv",
-                    mime="text/csv"
-                )
-            else:
-                st.warning("No data found in the Google Sheet.")
-        except Exception as e:
-            st.error(f"❌ Error loading data from Google Sheets: {e}")
+    if st.session_state.gsheet_data is not None and not st.session_state.gsheet_data.empty:
+        st.write("### Loaded Tickets Preview")
+        st.dataframe(st.session_state.gsheet_data)
+
+        csv_data = st.session_state.gsheet_data.to_csv(index=False)
+        st.download_button(
+            label="📥 Download Loaded Tickets as CSV",
+            data=csv_data,
+            file_name="loaded_tickets.csv",
+            mime="text/csv"
+        )
 
 
 

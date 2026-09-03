@@ -1,4 +1,7 @@
+import os
+import time
 import gspread
+from gspread.exceptions import APIError, SpreadsheetNotFound, WorksheetNotFound
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -10,6 +13,9 @@ class GoogleSheetLoader:
         self.df = None
     
     def _authorize_google_sheet(self):
+        if not os.path.exists(self.creds_path):
+            raise FileNotFoundError(f"Credentials file not found at: {self.creds_path}")
+
         scope = [
             "https://spreadsheets.google.com/feeds", 
             "https://www.googleapis.com/auth/drive"
@@ -19,12 +25,37 @@ class GoogleSheetLoader:
         client = gspread.authorize(creds)
         return client
 
-    def load_data(self):
-        client = self._authorize_google_sheet()
-        sheet = client.open(self.sheet_name).worksheet(self.worksheet_name)
-        data = sheet.get_all_records()
-        self.df = pd.DataFrame(data)
-        return self.df
+    def load_data(self, max_retries=4, base_delay=2):
+        last_error = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                client = self._authorize_google_sheet()
+                sheet = client.open(self.sheet_name).worksheet(self.worksheet_name)
+                data = sheet.get_all_records()
+                self.df = pd.DataFrame(data)
+                return self.df
+            except APIError as e:
+                last_error = e
+                err_msg = str(e)
+                # Check for transient HTTP error codes: 503, 500, 502, 504, 429
+                is_transient = any(code in err_msg for code in ["503", "500", "502", "504", "429"])
+                if is_transient and attempt < max_retries:
+                    delay = base_delay * (2 ** (attempt - 1))
+                    print(f"Transient Google API error ({err_msg}). Retrying in {delay}s (attempt {attempt}/{max_retries})...")
+                    time.sleep(delay)
+                    continue
+                raise
+            except Exception as e:
+                last_error = e
+                err_msg = str(e)
+                if ("503" in err_msg or "timed out" in err_msg.lower()) and attempt < max_retries:
+                    delay = base_delay * (2 ** (attempt - 1))
+                    print(f"Temporary connection error ({err_msg}). Retrying in {delay}s (attempt {attempt}/{max_retries})...")
+                    time.sleep(delay)
+                    continue
+                raise
+        if last_error:
+            raise last_error
     
     def get_dataframe(self):
         if self.df is not None:
